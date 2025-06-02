@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.mydomain.vkteams2bitrix24.VkTeams2Bitrix24
+
