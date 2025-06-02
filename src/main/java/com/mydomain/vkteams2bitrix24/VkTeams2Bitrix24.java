@@ -33,7 +33,7 @@ public class VkTeams2Bitrix24 {
         VkTeamsServicePost vkTeamsServicePost = new VkTeamsServicePost();
         List<VkEvent> vkEvent = new ArrayList<>();
 
-        int folderId = 14149; // ID Folder to save in Bitrix24
+        int folderId = {id_bitrix24_folder}; // ID Folder to save in Bitrix24
 
         StringBuilder emploeerName = new StringBuilder(); // Name of sender
         StringBuilder vkTeamsGetFileJsonData = new StringBuilder(); // Vk File Json Data
