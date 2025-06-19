@@ -2,6 +2,7 @@ package com.mydomain.vkteams2bitrix24.service;
 
 import com.mydomain.vkteams2bitrix24.config.EventCheckServiceProperties;
 import com.mydomain.vkteams2bitrix24.model.VkEvent;
+import com.mydomain.vkteams2bitrix24.model.VkMessageResponse;
 import com.mydomain.vkteams2bitrix24.model.VkTaskObject;
 import lombok.Data;
 import lombok.ToString;
@@ -44,7 +45,7 @@ public class EventCheckService {
 
     private VkTeamsServiceGet vkTeamsServiceGet = new VkTeamsServiceGet();
     private VkTeamsServicePost vkTeamsServicePost = new VkTeamsServicePost();
-
+    private VkMessageResponse vkMessageResponse = new VkMessageResponse();
 
     @Autowired
     public EventCheckService(EventCheckServiceProperties eventCheckServiceProperties) {
@@ -124,7 +125,12 @@ public class EventCheckService {
                             }
                         } else {
                             log.info("Not your own !");
-                            vkTeamsServicePost.getVkTeamsSendMsg(vkTeamsSendMessageHook, vkBotToken, vkTaskObjects.getFirst().getChatId(), vkEvent.getPayload().getMsgId(),"У вас нет доступа для обращения.");
+                            vkMessageResponse = vkTeamsServicePost.getVkTeamsSendMsg(vkTeamsSendMessageHook, vkBotToken, vkTaskObjects.getFirst().getChatId(), vkEvent.getPayload().getMsgId(),"У вас нет доступа для обращения.");
+                            if (vkMessageResponse.isOk()){
+                                log.info("VkTeams send message is ok: " + true);
+                            } else {
+                                log.error("VkTeams send message failed: " + false);
+                            }
                         }
                     }
                 }

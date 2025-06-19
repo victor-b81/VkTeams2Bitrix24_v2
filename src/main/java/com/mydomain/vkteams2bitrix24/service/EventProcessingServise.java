@@ -2,6 +2,7 @@ package com.mydomain.vkteams2bitrix24.service;
 
 import com.mydomain.vkteams2bitrix24.config.EventProcessingServiseProperties;
 import com.mydomain.vkteams2bitrix24.model.Bitrix24TaskFields;
+import com.mydomain.vkteams2bitrix24.model.VkMessageResponse;
 import com.mydomain.vkteams2bitrix24.model.VkTaskObject;
 import com.mydomain.vkteams2bitrix24.utils.FileDownloader;
 import lombok.Data;
@@ -53,6 +54,8 @@ public class EventProcessingServise {
     List<VkTaskObject> vkTaskObjects = new ArrayList<>(); // List of events
     Iterator<VkTaskObject> iteratorVkTaskObject;
     VkTaskObject vkTaskObject;
+    private VkMessageResponse vkMessageResponse = new VkMessageResponse();
+
 
     @Autowired
     public EventProcessingServise(EventProcessingServiseProperties eventProcessingServiseProperties) {
@@ -74,7 +77,7 @@ public class EventProcessingServise {
         if (!vkTaskObjects.isEmpty()) {
             while (iteratorVkTaskObject.hasNext()) {
                 vkTaskObject = iteratorVkTaskObject.next();
-                if ((System.currentTimeMillis() / 1000) - vkTaskObject.getTimestamp() > 600) {
+                if ((System.currentTimeMillis() / 1000) - vkTaskObject.getTimestamp() > 20) {
                     if (!vkTaskObject.getReadyToDelete().equals("Yes")) {
 
                         if (vkTaskObject.getChatId().equals(vkChatAXO)) {
@@ -97,7 +100,7 @@ public class EventProcessingServise {
 
                         // Create Bitrix24 task
                         bitrix24ResponseTaskInfoJson.delete(0, bitrix24ResponseTaskInfoJson.length()); // Clearing the bitrix24ResponseTask, before assigning a new data bitrix24ResponseTask
-                        bitrix24ResponseTaskInfoJson.append(bitrix24RestTemplateServicePost.createTaskPost(bitrix24AddTaskHook, bitrix24TaskFields));
+                        //bitrix24ResponseTaskInfoJson.append(bitrix24RestTemplateServicePost.createTaskPost(bitrix24AddTaskHook, bitrix24TaskFields));
                         log.info("Create task: " + bitrix24TaskFields);
 
                         // Upload files to Bitrix24
@@ -145,8 +148,13 @@ public class EventProcessingServise {
                         });
                         // Sending a message to the VK Teams chat
                         vkMessageText.delete(0, vkMessageText.length()); // Clearing the text msg, before assigning a new text msg
-                        vkMessageText.append(vkTaskObject.getFromWho() + "\n" + "По вашему обращению создана задача \n" + vkTaskObject.getTextMsg());
-                        vkTeamsServicePost.getVkTeamsSendMsg(eventCheckService.getVkTeamsSendMessageHook(), eventCheckService.getVkBotToken(), vkTaskObject.getChatId(), vkTaskObject.getVkMsgId(), String.valueOf(vkMessageText));
+                        vkMessageText.append(vkTaskObject.getFromWho()).append("\n").append("По вашему обращению создана задача \n").append(vkTaskObject.getTextMsg());
+                        vkMessageResponse = vkTeamsServicePost.getVkTeamsSendMsg(eventCheckService.getVkTeamsSendMessageHook(), eventCheckService.getVkBotToken(), vkTaskObject.getChatId(), vkTaskObject.getVkMsgId(), String.valueOf(vkMessageText));
+                        if (vkMessageResponse.isOk()){
+                            log.info("VkTeams send message is ok: " + true);
+                        } else {
+                            log.error("VkTeams send message failed: " + false);
+                        }
                         eventCheckService.checkToDelVkTaskObject(vkTaskObject.getTimestamp());
                     }
                 }
