@@ -105,8 +105,8 @@ public class EventProcessingServise {
 
                         // Upload files to Bitrix24
                         vkTaskObject.getAttachment().lines().toList().forEach(fileAttachmentList -> {
-                            int fileId = 0;
-                            int taskId = 0;
+                            int fileId;
+                            int taskId;
                             addDateTimeToFile.delete(0, addDateTimeToFile.length()); // Clearing the date, before assigning a new date
                             addDateTimeToFile.append(vkTimeStampAddToFileFormat.format(new Date()));
 
@@ -115,10 +115,9 @@ public class EventProcessingServise {
                             if (!fileAttachmentList.equals("null")) {
                                 dowloadFilePath.delete(0, dowloadFilePath.length());
                                 try {
-                                    dowloadFilePath.append(projectPath + File.separator + "temp" + File.separator + bitrix24IndexGroup + "_" + addDateTimeToFile + "_" + Paths.get(new URL(fileAttachmentList).getPath()).getFileName().toString());
-                                } catch (MalformedURLException e) {
-                                    log.error("Errore. MalformedURLException: " + fileAttachmentList);
-                                    throw new RuntimeException(e);
+                                    dowloadFilePath.append(projectPath).append(File.separator).append("temp").append(File.separator).append(bitrix24IndexGroup).append("_").append(addDateTimeToFile).append("_").append(Paths.get(new URL(fileAttachmentList).getPath()).getFileName().toString());
+                                } catch (Exception e) {
+                                    log.error("Errore download file: " + e.getMessage());
                                 }
 
                                 FileDownloader.downloadFile(fileAttachmentList, dowloadFilePath.toString());
@@ -132,7 +131,7 @@ public class EventProcessingServise {
                                             bitrix24RestTemplateServicePost.addFileToTask(bitrix24AddFileToTaskHook, taskId, fileId);
                                             log.info("Add file to task: " + taskId + " " + fileId);
                                         } catch (Exception e) {
-                                            log.error("Errore. MalformedURLException: " + bitrix24ResponseTaskInfoJson.toString());
+                                            log.error("Errore add file to task: " + bitrix24ResponseTaskInfoJson.toString());
                                             throw new RuntimeException(e);
                                         }
                                     }
@@ -143,7 +142,11 @@ public class EventProcessingServise {
                             // Delete local copies of files uploaded to Bitrix24
                             File file = new File(String.valueOf(dowloadFilePath));
                             if (file.exists()) {
-                                file.delete();
+                                try {
+                                    file.delete();
+                                } catch (Exception e) {
+                                    log.error("Errore delete file: " + file);
+                                }
                             }
                         });
                         // Sending a message to the VK Teams chat
