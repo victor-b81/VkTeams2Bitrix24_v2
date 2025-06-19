@@ -7,7 +7,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -21,7 +24,7 @@ public class VkTeamsServicePost {
         StringBuilder urlBuilder = new StringBuilder(webhookUrl + "?" + "token=" + token + "&" + "chatId=" + chatId  + "&" + "replyMsgId=" + replyMsgId + "&" + "text=" + textMsg);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         HttpEntity<VkMessageResponse> response = restTemplate.exchange(urlBuilder.toString(), HttpMethod.POST, entity, VkMessageResponse.class);
-        log.info("Send message to chat :" + response.getBody().toString());
+        log.info("Send message to chat :{}", response.getBody());
         urlBuilder.delete(0, urlBuilder.length());
         return response.getBody();
     }
