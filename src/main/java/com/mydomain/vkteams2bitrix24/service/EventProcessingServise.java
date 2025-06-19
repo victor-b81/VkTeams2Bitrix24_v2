@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -31,8 +30,7 @@ public class EventProcessingServise {
     @Autowired
     private EventCheckService eventCheckService;
 
-    // Get project path
-    private String projectPath = System.getProperty("user.dir");
+    private String projectPath = System.getProperty("user.dir");     // Get project path
     private String bitrix24AddTaskHook;
     private String bitrix24UploadFileHook;
     private String bitrix24AddFileToTaskHook;
@@ -48,6 +46,7 @@ public class EventProcessingServise {
     private StringBuffer bitrix24ResponseTaskInfoJson = new StringBuffer(); // Bitrix24 response, of create task
     private StringBuffer dowloadFilePath = new StringBuffer(); // Download file Path
     private StringBuffer vkMessageText = new StringBuffer(); // Vk chat, send text message
+    private boolean fileIsDeleted = true;
 
     private Bitrix24RestTemplateServicePost bitrix24RestTemplateServicePost = new Bitrix24RestTemplateServicePost();
     private VkTeamsServicePost vkTeamsServicePost = new VkTeamsServicePost();
@@ -142,7 +141,12 @@ public class EventProcessingServise {
                             // Delete local copies of files uploaded to Bitrix24
                             File file = new File(String.valueOf(dowloadFilePath));
                             if (file.exists()) {
-                                file.delete();
+                                fileIsDeleted = file.delete();
+                                if (fileIsDeleted){
+                                    log.info("Delete file: {}", file.getAbsolutePath());
+                                } else {
+                                    log.error("Delete file: {}", file.getAbsolutePath());
+                                }
                             }
                         });
                         // Sending a message to the VK Teams chat
