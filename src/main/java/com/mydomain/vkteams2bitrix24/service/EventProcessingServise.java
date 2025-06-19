@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -142,11 +142,7 @@ public class EventProcessingServise {
                             // Delete local copies of files uploaded to Bitrix24
                             File file = new File(String.valueOf(dowloadFilePath));
                             if (file.exists()) {
-                                try {
-                                    file.delete();
-                                } catch (Exception e) {
-                                    log.error("Errore delete file: " + file);
-                                }
+                                file.delete();
                             }
                         });
                         // Sending a message to the VK Teams chat
