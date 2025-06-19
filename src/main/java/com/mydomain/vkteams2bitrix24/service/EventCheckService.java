@@ -52,7 +52,7 @@ public class EventCheckService {
         vkTeamsGetEventHook = eventCheckServiceProperties.getVkTeamsBotHook() + eventCheckServiceProperties.getVkTeamsGetEventHook();
         vkBotToken = eventCheckServiceProperties.getVkBotToken();
         vkTeamsGetEventJsonData.append(vkTeamsServiceGet.getUrlVkTeamsEventData(vkTeamsGetEventHook, vkBotToken, vkLastEventId, vkPollTime));
-        vkTeamsGetFileJsonDataHook.append(eventCheckServiceProperties.getVkTeamsBotHook() + eventCheckServiceProperties.getVkTeamsGetFileDataHook() + "?" + "token=" + vkBotToken);
+        vkTeamsGetFileJsonDataHook.append(eventCheckServiceProperties.getVkTeamsBotHook()).append(eventCheckServiceProperties.getVkTeamsGetFileDataHook()).append("?").append("token=").append(vkBotToken);
         vkTeamsSendMessageHook = eventCheckServiceProperties.getVkTeamsBotHook() + eventCheckServiceProperties.getVkTeamsSendMessageHook();
     }
 
@@ -83,14 +83,14 @@ public class EventCheckService {
                             // Проверяем есть ли файлы
                             if (vkEvent.getPayload().getParts() != null) {
                                 log.info("event have attachment! Getting data");
-                                vkTeamsGetFileJsonData.append(vkTeamsGetFileJsonDataHook + "&fileId=" + vkEvent.getPayload().getParts().getPayload().getFileId());
+                                vkTeamsGetFileJsonData.append(vkTeamsGetFileJsonDataHook).append("&fileId=").append(vkEvent.getPayload().getParts().getPayload().getFileId());
                                 vkAttachment.append(vkTeamsServiceGet.getVkTeamsFileData(vkTeamsGetFileJsonData.toString()).getUrl());
                                 if (vkEvent.getPayload().getParts().getPayload().getCaption() == null) {
                                     log.info("the event has an attachment with out a comment!");
                                     vkTextMessage.append("Комментариев к файлам нет: ");
                                 } else {
                                     log.info("the event has an attachment with a comment! adding comment!");
-                                    vkTextMessage.append("Комментарии к файлам: " + vkEvent.getPayload().getParts().getPayload().getCaption());
+                                    vkTextMessage.append("Комментарии к файлам: ").append(vkEvent.getPayload().getParts().getPayload().getCaption());
                                 }
                             } else {
                                 log.info("event with out attachment! move forvard");
@@ -98,7 +98,7 @@ public class EventCheckService {
                                 vkTextMessage.append(vkEvent.getPayload().getText());
                             }
 
-                            vkEmploeerName.append(vkEvent.getPayload().getFrom().getLastName() + " " + vkEvent.getPayload().getFrom().getFirstName());
+                            vkEmploeerName.append(vkEvent.getPayload().getFrom().getLastName()).append(" ").append(vkEvent.getPayload().getFrom().getFirstName());
 
                             log.info("Placing the required data into the object");
                             if (!vkTaskObjects.isEmpty()) {
@@ -106,7 +106,7 @@ public class EventCheckService {
 
                                     vkTaskObjects.forEach(vkTaskObject -> {
                                         if (vkTaskObject.getChatTitle().equals(String.valueOf(vkChatName))) {
-                                            if (vkTaskObject.getFromWho().equals(vkEmploeerName.toString())) {
+                                            if (vkTaskObject.getFromWho().contentEquals(vkEmploeerName)) {
                                                 vkTaskObject.setTextMsg(vkTaskObject.getTextMsg() + "\n" + vkTextMessage);
                                                 vkTaskObject.setTimestamp(vkEvent.getPayload().getTimestamp());
                                                 vkTaskObject.setAttachment(vkTaskObject.getAttachment() + "\n" + vkAttachment);
