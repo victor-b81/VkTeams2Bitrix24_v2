@@ -1,4 +1,4 @@
-package com.mydomain.vkteams2bitrix24.service;
+package com.mydomain.vkteams2bitrix24.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Base64;
 
 @Slf4j
@@ -20,7 +19,7 @@ public class EncodeFileToBase64 {
             log.info("Encode file to Base64 done (" + file.getName() + ")");
             return Base64.getEncoder().encodeToString(fileBytes);
         } catch (IOException e) {
-            log.info("Encode file to Base64 errore (" + file.getName() + ")");
+            log.error("Encode file to Base64 errore (" + file.getName() + ")");
             return null;
         }
     }

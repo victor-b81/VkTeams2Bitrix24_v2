@@ -1,0 +1,22 @@
+server:
+    port: 8443
+spring:
+    application:
+        name: VkTeams2Bitrix24
+
+eventcheckservicecfg:
+    vkTeamsBotHook: https://myteam.mail.ru/bot/v1
+    vkTeamsGetFileDataHook: /files/getInfo
+    vkTeamsGetEventHook: /events/get
+    vkTeamsSendMessageHook: /messages/sendText
+    vkBotToken: токен бота ВК Тимс
+eventprocessingservisecfg:
+    bitrix24UserHook: https://blikavto.bitrix24.ru/rest/ИД пользователя/уид хука/
+    bitrix24AddTaskHook: tasks.task.add.json
+    bitrix24UploadFileHook: disk.folder.uploadfile.json
+    bitrix24AddFileToTaskHook: tasks.task.files.attach.json
+    bitrix24folderId: ИД папки для сохранения файлов помещаемых в задачи
+    bitrix24DefIndexGroup: ИД группы для размещения задач по умолчанию
+    bitrix24RespID: ИД ответственного лица для задач по умолчанию
+    vkChatAXO: Ид чата вк тимс@chat.agent
+    vkChatIT: Ид чата вк тимс@chat.agent

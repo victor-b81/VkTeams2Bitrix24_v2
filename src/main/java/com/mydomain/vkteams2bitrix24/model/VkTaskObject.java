@@ -2,8 +2,6 @@ package com.mydomain.vkteams2bitrix24.model;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor

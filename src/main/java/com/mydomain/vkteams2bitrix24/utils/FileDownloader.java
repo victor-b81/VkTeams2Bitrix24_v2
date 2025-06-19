@@ -1,4 +1,4 @@
-package com.mydomain.vkteams2bitrix24.service;
+package com.mydomain.vkteams2bitrix24.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Slf4j
@@ -22,6 +21,7 @@ public class FileDownloader {
                 Files.createDirectory(Paths.get("temp"));
                 log.info("Create directory: temp");
             } catch (IOException e) {
+                log.error("Errore create directory temp: " + e.getMessage());
                 throw new RuntimeException(e);
             }
         }

@@ -1,14 +1,14 @@
 package com.mydomain.vkteams2bitrix24.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.mydomain.vkteams2bitrix24.model.submodel.Bitrix24Group;
 import com.mydomain.vkteams2bitrix24.model.submodel.Bitrix24Person;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Date;
 
 @Getter
 @Setter

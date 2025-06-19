@@ -2,11 +2,13 @@ package com.mydomain.vkteams2bitrix24.service;
 
 import com.mydomain.vkteams2bitrix24.model.VkEvents;
 import com.mydomain.vkteams2bitrix24.model.submodel.VkFileObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 public class VkTeamsServiceGet {
     //GET Request
