@@ -34,11 +34,13 @@ public class EventProcessingServise {
     private String bitrix24AddTaskHook;
     private String bitrix24UploadFileHook;
     private String bitrix24AddFileToTaskHook;
+    private String bitrix24TasksTaskUpdateHook;
     private int bitrix24folderId;
     private int bitrix24IndexGroup;
     private int bitrix24RespID;
     private String vkChatAXO;
     private String vkChatIT;
+    private String vkChatSKLAD;
     private final SimpleDateFormat vkTimeStampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private final SimpleDateFormat vkTimeStampAddToFileFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     private StringBuffer addDateTimeToFile = new StringBuffer();
@@ -61,11 +63,13 @@ public class EventProcessingServise {
         this.bitrix24AddTaskHook = eventProcessingServiseProperties.getBitrix24UserHook() + eventProcessingServiseProperties.getBitrix24AddTaskHook();
         this.bitrix24UploadFileHook = eventProcessingServiseProperties.getBitrix24UserHook() + eventProcessingServiseProperties.getBitrix24UploadFileHook();
         this.bitrix24AddFileToTaskHook = eventProcessingServiseProperties.getBitrix24UserHook() + eventProcessingServiseProperties.getBitrix24AddFileToTaskHook();
+        this.bitrix24TasksTaskUpdateHook = eventProcessingServiseProperties.getBitrix24UserHook() + eventProcessingServiseProperties.getBitrix24TasksTaskUpdateHook();
         this.bitrix24folderId = eventProcessingServiseProperties.getBitrix24folderId();
         this.bitrix24IndexGroup = eventProcessingServiseProperties.getBitrix24DefIndexGroup();
         this.bitrix24RespID = eventProcessingServiseProperties.getBitrix24RespID();
         this.vkChatAXO = eventProcessingServiseProperties.getVkChatAXO();
         this.vkChatIT = eventProcessingServiseProperties.getVkChatIT();
+        this.vkChatSKLAD = eventProcessingServiseProperties.getVkChatSKLAD();
     }
 
     @Async
@@ -79,28 +83,52 @@ public class EventProcessingServise {
                 if ((System.currentTimeMillis() / 1000) - vkTaskObject.getTimestamp() > 20) {
                     if (!vkTaskObject.getReadyToDelete().equals("Yes")) {
 
+                        Bitrix24TaskFields bitrix24TaskFields = null;
+
                         if (vkTaskObject.getChatId().equals(vkChatAXO)) {
-                            bitrix24IndexGroup = 47;
-                            bitrix24RespID = 49;
+                            bitrix24IndexGroup = 47; // Group, default
+                            bitrix24RespID = 49; // Default Responsible
+                            bitrix24TaskFields = Bitrix24TaskFields.builder()
+                                    .TITLE("Chat BOT! : " + vkTaskObject.getFromWho())
+                                    .GROUP_ID(bitrix24IndexGroup)
+                                    .RESPONSIBLE_ID(bitrix24RespID)
+                                    .DESCRIPTION(vkTaskObject.getTextMsg())
+                                    .ALLOW_CHANGE_DEADLINE('Y')
+                                    .AUDITORS(new String[]{"1", "71", "89"}) // Observers
+                                    .DEADLINE(vkTimeStampFormat.format(System.currentTimeMillis() + 14L * 24 * 60 * 60 * 1000)) // 14 days for execution
+                                    .build();
+                        } else if (vkTaskObject.getChatId().equals(vkChatSKLAD)) {
+                            bitrix24IndexGroup = 73;
+                            bitrix24RespID = 95;
+                            bitrix24TaskFields = Bitrix24TaskFields.builder()
+                                    .TITLE("Chat BOT! : " + vkTaskObject.getFromWho())
+                                    .GROUP_ID(bitrix24IndexGroup)
+                                    .RESPONSIBLE_ID(bitrix24RespID)
+                                    .DESCRIPTION(vkTaskObject.getTextMsg())
+                                    .ALLOW_CHANGE_DEADLINE('Y')
+                                    .AUDITORS(new String[]{"1", "71", "89"}) // Observers
+                                    .DEADLINE(vkTimeStampFormat.format(System.currentTimeMillis() + 14L * 24 * 60 * 60 * 1000)) // 14 days for execution
+                                    .build();
                         } else {
                             bitrix24IndexGroup = 45;
                             bitrix24RespID = 77;
+                            bitrix24TaskFields = Bitrix24TaskFields.builder()
+                                    .TITLE("Chat BOT! : " + vkTaskObject.getFromWho())
+                                    .GROUP_ID(bitrix24IndexGroup)
+                                    .RESPONSIBLE_ID(bitrix24RespID)
+                                    .DESCRIPTION(vkTaskObject.getTextMsg())
+                                    .ALLOW_CHANGE_DEADLINE('Y')
+                                    .ACCOMPLICES(new String[]{"97"})
+                                    .AUDITORS(new String[]{"1", "71", "89"}) // Observers
+                                    .DEADLINE(vkTimeStampFormat.format(System.currentTimeMillis() + 14L * 24 * 60 * 60 * 1000)) // 14 days for execution
+                                    .build();
                         }
 
-                        Bitrix24TaskFields bitrix24TaskFields = Bitrix24TaskFields.builder()
-                                .TITLE("Чат БОТ! : " + vkTaskObject.getFromWho())
-                                .GROUP_ID(bitrix24IndexGroup)
-                                .RESPONSIBLE_ID(bitrix24RespID)
-                                .DESCRIPTION(vkTaskObject.getTextMsg())
-                                .ALLOW_CHANGE_DEADLINE('Y')
-                                .AUDITORS(new String[]{"1"})
-                                .DEADLINE(vkTimeStampFormat.format(System.currentTimeMillis() + 5L * 24 * 60 * 60 * 1000))
-                                .build();
-
                         // Create Bitrix24 task
+                        log.info("===========================================================================================");
+                        log.info("Trying to create a new task in Bitrix24.: TITLE= " + bitrix24TaskFields.getTITLE() + "; Timestamp= " + vkTaskObject.getTimestamp());
                         bitrix24ResponseTaskInfoJson.delete(0, bitrix24ResponseTaskInfoJson.length()); // Clearing the bitrix24ResponseTask, before assigning a new data bitrix24ResponseTask
-                        //bitrix24ResponseTaskInfoJson.append(bitrix24RestTemplateServicePost.createTaskPost(bitrix24AddTaskHook, bitrix24TaskFields));
-                        log.info("Create task: " + bitrix24TaskFields);
+                        bitrix24ResponseTaskInfoJson.append(bitrix24RestTemplateServicePost.createTaskPost(bitrix24AddTaskHook, bitrix24TaskFields));
 
                         // Upload files to Bitrix24
                         vkTaskObject.getAttachment().lines().toList().forEach(fileAttachmentList -> {
@@ -122,6 +150,7 @@ public class EventProcessingServise {
                                 FileDownloader.downloadFile(fileAttachmentList, dowloadFilePath.toString());
 
                                 bitrix24ResponseUploadFileJson.append(bitrix24RestTemplateServicePost.uploadFile(bitrix24UploadFileHook, dowloadFilePath.toString(), bitrix24folderId));
+
                                 if (!bitrix24ResponseTaskInfoJson.toString().isEmpty()) {
                                     if (!bitrix24ResponseUploadFileJson.toString().contains("error")) {
                                         try {
@@ -130,7 +159,7 @@ public class EventProcessingServise {
                                             bitrix24RestTemplateServicePost.addFileToTask(bitrix24AddFileToTaskHook, taskId, fileId);
                                             log.info("Add file to task: " + taskId + " " + fileId);
                                         } catch (Exception e) {
-                                            log.error("Errore add file to task: " + bitrix24ResponseTaskInfoJson.toString());
+                                            log.error("Error add file to task: " + bitrix24ResponseTaskInfoJson.toString());
                                             throw new RuntimeException(e);
                                         }
                                     }
@@ -159,6 +188,9 @@ public class EventProcessingServise {
                             log.error("VkTeams send message failed: " + false);
                         }
                         eventCheckService.checkToDelVkTaskObject(vkTaskObject.getTimestamp());
+
+                        log.info("Finishing the Bitrix24 task creation procedure");
+                        log.info("===========================================================================================");
                     }
                 }
             }

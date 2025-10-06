@@ -66,7 +66,6 @@ public class EventCheckService {
 
             log.info("Get message data");
             vkEvent.add(vkTeamsServiceGet.getVkTeamsEventData(String.valueOf(vkTeamsGetEventJsonData)).getEvents().getFirst());
-
             log.info("Process message data");
             vkEvent.forEach(vkEvent -> {
                 if (vkEvent.getType().equals("newMessage")) {
@@ -158,7 +157,11 @@ public class EventCheckService {
         vkTaskObjects.forEach(taskObject -> {
             if (taskObject.getTimestamp() == timeStamp) {
                 taskObject.setReadyToDelete(deleteStatusYes);
-                log.info("Check to delete task by timestamp: " + taskObject);
+                log.info("Check to delete task by timestamp: ChatID= " + taskObject.getChatTitle()
+                        + "; FromWho= " + taskObject.getFromWho()
+                        + "; Timestamp= " + taskObject.getTimestamp()
+                        + "; ReadyToDelete= " + taskObject.getReadyToDelete()
+                );
             }
         });
     }

@@ -15,8 +15,10 @@ public class EventProcessingServiseProperties {
     private String bitrix24AddTaskHook;
     private String bitrix24UploadFileHook;
     private String bitrix24AddFileToTaskHook;
+    private String bitrix24TasksTaskUpdateHook;
     private int bitrix24DefIndexGroup;
     private int bitrix24RespID;
     private String vkChatAXO;
     private String vkChatIT;
+    private String vkChatSKLAD;
 }

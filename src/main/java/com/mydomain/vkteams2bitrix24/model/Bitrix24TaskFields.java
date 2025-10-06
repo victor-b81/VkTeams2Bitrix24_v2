@@ -108,7 +108,7 @@ public class Bitrix24TaskFields {
     @JsonProperty("SERVICE_COMMENTS_COUNT")
     int SERVICE_COMMENTS_COUNT;
     @JsonProperty("ACCOMPLICES")
-    int[] ACCOMPLICES;
+    String[] ACCOMPLICES;
     @JsonProperty("TITLE")
     String TITLE;
     @JsonProperty("DESCRIPTION")

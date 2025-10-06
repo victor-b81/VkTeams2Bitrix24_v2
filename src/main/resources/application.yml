@@ -9,17 +9,19 @@ eventcheckservicecfg:
     vkTeamsGetFileDataHook: /files/getInfo
     vkTeamsGetEventHook: /events/get
     vkTeamsSendMessageHook: /messages/sendText
-    #    vkBotToken: 001.3054308264.3514123658:1011861625
-    vkBotToken: 001.2981831058.1692425810:1011975643
+    # WorkBot
+    # vkBotToken: ______ # Key
+    # Test Bot
+    vkBotToken: ______ # Key
 eventprocessingservisecfg:
-    bitrix24UserHook: https://blikavto.bitrix24.ru/rest/115/8sdcenmx575wer2k/
+    bitrix24UserHook: ______ # Bitrix24 Hook Task rights
     bitrix24AddTaskHook: tasks.task.add.json
     bitrix24UploadFileHook: disk.folder.uploadfile.json
     bitrix24AddFileToTaskHook: tasks.task.files.attach.json
-    bitrix24folderId: 14149
-    bitrix24DefIndexGroup: 45
-    bitrix24RespID: 77
-    vkChatAXO: 689432012@chat.agent
-    vkChatIT: 689483635@chat.agent
-#Индексы ИД чатов, где 47 - это АХО, а 45 это ИТ
-#Индексы ИД Ответственных лиц, где 49 - это АХО Петриков,  а 77 это ИТ Борисенко
+    bitrix24TasksTaskUpdateHook: tasks.task.update.json
+    bitrix24folderId: ______ # Bitrix24 Folder ID
+    bitrix24DefIndexGroup: ______ # Bitrix24 Default Group ID
+    bitrix24RespID: ______ # Bitrix24 Default Responsible ID
+    vkChatAXO: ______@chat.agent # Vk Teams Group 1
+    vkChatIT: ______@chat.agent # Vk Teams Group 2
+    vkChatSKLAD: ______@chat.agent # Vk Teams Group 3

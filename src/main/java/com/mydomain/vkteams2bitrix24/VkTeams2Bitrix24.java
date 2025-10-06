@@ -33,8 +33,6 @@ public class VkTeams2Bitrix24 {
 
     @Scheduled(fixedDelay = 22000)
     public void checkTimeThread () {
-        if (!eventCheckService.getVkTaskObjects().isEmpty()) {
-            eventProcessingServise.eventProcessing();
-        }
+        if (!eventCheckService.getVkTaskObjects().isEmpty()) eventProcessingServise.eventProcessing();
     }
 }

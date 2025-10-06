@@ -79,21 +79,21 @@ public class Bitrix24RestTemplateServicePost {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(newTasks, headers);
 
         // Sending a POST request
-        ResponseEntity<String> response = restTemplate.postForEntity(hook, entity, String.class);
+        ResponseEntity<String> responseCreateTaskBitrix24 = restTemplate.postForEntity(hook, entity, String.class);
 
         // Checking the answer
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("Request Successful. (Bitrix24, create task)");
-            returnData = response.getBody();
+        if (responseCreateTaskBitrix24.getStatusCode().is2xxSuccessful()) {
+            log.info("Request Successful. (Bitrix24, create task Successful)");
+            returnData = responseCreateTaskBitrix24.getBody();
         } else {
-            log.info("Request Failed. (Bitrix24, create task)");
-            returnData = response.getStatusCode().toString();
+            log.info("Request Failed. (Bitrix24, create task Failed)");
+            returnData = responseCreateTaskBitrix24.getStatusCode().toString();
         }
         return returnData;
     }
 
     public String uploadFile(String webhookUrl, String filePath, int folderId) {
-
+        String returnData;
         StringBuilder fileName = new StringBuilder();
         StringBuilder fileBase64String = new StringBuilder();
         Map<String, String> data = new HashMap<>();
@@ -117,23 +117,17 @@ public class Bitrix24RestTemplateServicePost {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         HttpEntity<Bitrix24UploadFileModel> requestEntity = new HttpEntity<>(bitrix24UploadFileModel, headers);
+        ResponseEntity<String> responseUploadFile = restTemplate.postForEntity(webhookUrl, requestEntity, String.class);
 
-        ResponseEntity<String> response = null;
-        try {
-            response = restTemplate.postForEntity(webhookUrl, requestEntity, String.class);
-        } catch (Exception e) {
-            log.error("Errore upload file: " + e.getMessage());
+        // Checking the answer
+        if (responseUploadFile.getStatusCode().is2xxSuccessful()) {
+            log.info("Request Successful. (Bitrix24, upload file Successful)");
+            returnData = responseUploadFile.getBody();
+        } else {
+            log.info("Request Failed. (Bitrix24, upload file Failed)");
+            returnData = responseUploadFile.getStatusCode().toString();
         }
-        if (response.getStatusCode().isError()) {
-            try {
-                log.info("Let's try again");
-                response = restTemplate.postForEntity(webhookUrl, requestEntity, String.class);
-            } catch (Exception e) {
-                log.error("Errore upload file: " + e.getMessage());
-            }
-        }
-        log.info("Upload to Bitrix24 folder, status " + response.getStatusCode());
-        return response.getBody();
+        return returnData;
     }
 
     // Deserialize json to Bitrix24 uplad file object
@@ -147,17 +141,17 @@ public class Bitrix24RestTemplateServicePost {
 
     // Deserialize json to Bitrix24 task object
     public Bitrix24ResponseCreateTask taskMapJsonToObject(String jsonString) throws Exception {
+        Bitrix24ResponseCreateTask bitrix24ResponseCreateTask;
         JsonNode jsonNode;
         jsonNode = objectMapper.readTree(jsonString);
-        Bitrix24ResponseCreateTask bitrix24ResponseCreateTask = objectMapper.readValue(jsonNode.findValue("result").findValue("task").toString(), Bitrix24ResponseCreateTask.class);
+        bitrix24ResponseCreateTask = objectMapper.readValue(jsonNode.findValue("result").findValue("task").toString(), Bitrix24ResponseCreateTask.class);
         return bitrix24ResponseCreateTask;
     }
 
     // Add file on Bitrix disk to Task
     public String addFileToTask(String webhookUrl, int taskID, int fileID) {
         Bitrix24addFileToTask bitrix24addFileToTask = Bitrix24addFileToTask.builder().taskId(taskID).fileId(fileID).build();
-
-        // Set `accept` header
+         // Set `accept` header
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         HttpEntity<Bitrix24addFileToTask> requestEntity = new HttpEntity<>(bitrix24addFileToTask, headers);
@@ -165,7 +159,4 @@ public class Bitrix24RestTemplateServicePost {
         log.info("Bitrix24 add file to task, status " + response.getStatusCode());
         return response.getBody();
     }
-
-
-
 }

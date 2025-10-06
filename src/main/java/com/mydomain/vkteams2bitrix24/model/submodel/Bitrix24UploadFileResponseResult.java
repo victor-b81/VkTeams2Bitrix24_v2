@@ -1,55 +1,51 @@
-package com.mydomain.vkteams2bitrix24.model;
+package com.mydomain.vkteams2bitrix24.model.submodel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
-public class Bitrix24FileInfo {
+public class Bitrix24UploadFileResponseResult {
     @JsonProperty("ID")
-    int ID;
+    public int iD;
     @JsonProperty("NAME")
-    String NAME;
+    public String nAME;
     @JsonProperty("CODE")
-    String CODE;
+    public Object cODE;
     @JsonProperty("STORAGE_ID")
-    int STORAGE_ID;
+    public String sTORAGE_ID;
     @JsonProperty("TYPE")
-    String TYPE;
+    public String tYPE;
     @JsonProperty("PARENT_ID")
-    int PARENT_ID;
+    public String pARENT_ID;
     @JsonProperty("DELETED_TYPE")
-    int DELETED_TYPE;
+    public int dELETED_TYPE;
     @JsonProperty("GLOBAL_CONTENT_VERSION")
-    int GLOBAL_CONTENT_VERSION;
+    public int gLOBAL_CONTENT_VERSION;
     @JsonProperty("FILE_ID")
-    int FILE_ID;
+    public int fILE_ID;
     @JsonProperty("SIZE")
-    BigInteger SIZE;
+    public String sIZE;
     @JsonProperty("CREATE_TIME")
-    Date CREATE_TIME;
+    public Date cREATE_TIME;
     @JsonProperty("UPDATE_TIME")
-    Date UPDATE_TIME;
+    public Date uPDATE_TIME;
     @JsonProperty("DELETE_TIME")
-    Date DELETE_TIME;
+    public Object dELETE_TIME;
     @JsonProperty("CREATED_BY")
-    int CREATED_BY;
+    public String cREATED_BY;
     @JsonProperty("UPDATED_BY")
-    int UPDATED_BY;
+    public String uPDATED_BY;
     @JsonProperty("DELETED_BY")
-    int DELETED_BY;
+    public Object dELETED_BY;
     @JsonProperty("DOWNLOAD_URL")
-    String DOWNLOAD_URL;
+    public String dOWNLOAD_URL;
     @JsonProperty("DETAIL_URL")
-    String DETAIL_URL;
-    @JsonProperty("ACCOMPLICES")
-    String[] ACCOMPLICES;
+    public String dETAIL_URL;
 }
